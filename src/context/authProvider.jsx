@@ -1,7 +1,9 @@
 import { createContext, useEffect, useState } from "react";
+import PropTypes from "prop-types";
 import { auth } from "../services/firebase";
 import {
   GoogleAuthProvider,
+  GithubAuthProvider,
   onAuthStateChanged,
   signInWithPopup,
   signOut,
@@ -17,7 +19,10 @@ export const AuthProvider = ({ children }) => {
     const provider = new GoogleAuthProvider();
     return signInWithPopup(auth, provider);
   }
-
+  function signInWithGithub() {
+    const provider = new GithubAuthProvider();
+    return signInWithPopup(auth, provider);
+  }
   function logout() {
     return signOut(auth);
   }
@@ -33,8 +38,13 @@ export const AuthProvider = ({ children }) => {
     });
   }, []);
 
+  // Prop validation
+  AuthProvider.propTypes = {
+  children: PropTypes.node.isRequired, // Ensures children is a React node and is required
+};
+
   return (
-    <AuthContext.Provider value={{ user, isLoading, signInWithGoogle, logout }}>
+    <AuthContext.Provider value={{ user, isLoading, signInWithGoogle,signInWithGithub, logout }}>
       {children}
     </AuthContext.Provider>
   );

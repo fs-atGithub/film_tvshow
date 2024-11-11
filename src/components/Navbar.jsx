@@ -22,15 +22,24 @@ import { useAuth } from "../context/useAuth";
 import { HamburgerIcon, SearchIcon } from "@chakra-ui/icons";
 
 const Navbar = () => {
-  const { user, signInWithGoogle, logout } = useAuth();
+  const { user, signInWithGoogle, signInWithGithub, logout } = useAuth();
   const { onOpen, isOpen, onClose } = useDisclosure();
 
   const handleGoogleLogin = async () => {
     try {
       await signInWithGoogle();
-      console.log("success");
+      console.log("Google login successful");
     } catch (error) {
-      console.log("errr", error);
+      console.error("Error during Google login:", error);
+    }
+  };
+
+  const handleGithubLogin = async () => {
+    try {
+      await signInWithGithub();
+      console.log("GitHub login successful");
+    } catch (error) {
+      console.error("Error during GitHub login:", error);
     }
   };
 
@@ -62,7 +71,7 @@ const Navbar = () => {
             <Link to="/search">
               <SearchIcon fontSize={"xl"} />
             </Link>
-            {user && (
+            {user ? (
               <Menu>
                 <MenuButton>
                   <Avatar
@@ -79,14 +88,16 @@ const Navbar = () => {
                   <MenuItem onClick={logout}>Logout</MenuItem>
                 </MenuList>
               </Menu>
-            )}
-            {!user && (
-              <Avatar
-                size={"sm"}
-                bg={"gray.800"}
-                as="button"
-                onClick={handleGoogleLogin}
-              />
+            ) : (
+              <Menu>
+                <MenuButton as={Button} colorScheme="gray">
+                  Login
+                </MenuButton>
+                <MenuList>
+                  <MenuItem onClick={handleGoogleLogin}>Sign in with Google</MenuItem>
+                  <MenuItem onClick={handleGithubLogin}>Sign in with GitHub</MenuItem>
+                </MenuList>
+              </Menu>
             )}
           </Flex>
 
@@ -113,12 +124,14 @@ const Navbar = () => {
                       </Box>
                     </Flex>
                   ) : (
-                    <Avatar
-                      size={"sm"}
-                      bg="gray.800"
-                      as="button"
-                      onClick={handleGoogleLogin}
-                    />
+                    <>
+                      <Button colorScheme="gray" onClick={handleGoogleLogin}>
+                        Sign in with Google
+                      </Button>
+                      <Button colorScheme="gray" onClick={handleGithubLogin}>
+                        Sign in with GitHub
+                      </Button>
+                    </>
                   )}
                 </DrawerHeader>
 
@@ -150,4 +163,4 @@ const Navbar = () => {
   );
 };
 
-export default Navbar;
+export default Navbar
